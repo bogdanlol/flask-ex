@@ -1,8 +1,10 @@
 import os
-from flask import Flask
+from types import MethodType
+from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from whitenoise import WhiteNoise
 from werkzeug.contrib.fixers import ProxyFix
+
 
 from app.extensions import db
 
@@ -16,7 +18,7 @@ def create_app(config_filename):
     """
     app = Flask(__name__)
     app.config.from_object(config_filename)
-
+    app.debug= True
     setup_db(app)
 
     # Add ProxyFix for HTTP headers
@@ -27,10 +29,20 @@ def create_app(config_filename):
 
     print("Creating a Flask app with DEBUG: {}".format(app.debug))
 
-    @app.route("/")
-    def hello():
-        return "Hello World!: DEBUG: {} Environment: {}".format(app.debug, app.env)
+    @app.route("/connectors", methods=['GET', 'POST'])
+    def connectors():
+        # curl --request POST 'localhost:8080/connectors' --header 'Content-Type:Application/json' --data '{"hello":"hello"}'
+        if request.method == 'POST':
+            content = request.json
+            print(content)
+            return jsonify(content)
 
+       
+
+        else:
+            return 'connectors'
+    
+   
     return app
 
 
