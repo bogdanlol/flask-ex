@@ -44,7 +44,7 @@ def create_app(config_filename):
             connStr = ""
             for conn in connectorsList:
                 connStr = connStr + conn+"\n\n"
-            return connStr
+            return jsonify(connStr)
         else:
             return 'connectors'
 
