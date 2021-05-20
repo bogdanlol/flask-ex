@@ -1,6 +1,6 @@
 FROM centos/python-36-centos7
 
-EXPOSE 8080
+EXPOSE 8081
 
 USER 1001
 
