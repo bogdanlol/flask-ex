@@ -11,4 +11,4 @@ ADD requirements.txt /opt/app-root/src/requirements.txt
 
 RUN pip install -r requirements.txt
 
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "wsgi:application"]
+CMD ["gunicorn", "-b", "0.0.0.0:8081", "wsgi:application"]
