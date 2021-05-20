@@ -48,8 +48,6 @@ def create_app(config_filename):
         else:
             return 'connectors'
 
-    app.run(debug=True, port=5000)
-
     return app
 
 
