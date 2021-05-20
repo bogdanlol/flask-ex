@@ -29,20 +29,27 @@ def create_app(config_filename):
 
     print("Creating a Flask app with DEBUG: {}".format(app.debug))
 
+    connectorsList = []
+
     @app.route("/connectors", methods=['GET', 'POST'])
     def connectors():
         # curl --request POST 'localhost:8080/connectors' --header 'Content-Type:Application/json' --data '{"hello":"hello"}'
         if request.method == 'POST':
-            content = request.json
+            content = request.get_json()
             print(content)
+            connectorsList.append(str(content))
             return jsonify(content)
-
-       
-
+        elif request.method == 'GET':
+            print(connectorsList)
+            connStr = ""
+            for conn in connectorsList:
+                connStr = connStr + conn+"\n\n"
+            return connStr
         else:
             return 'connectors'
-    
-   
+
+    app.run(debug=True, port=5000)
+
     return app
 
 
@@ -71,3 +78,5 @@ def setup_db(app):
     db.init_app(app)
     Migrate(app, db)
     db.app = app
+
+
