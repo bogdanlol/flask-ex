@@ -48,6 +48,22 @@ def create_app(config_filename):
         else:
             return 'connectors'
 
+    @app.route("/connectors/<name>", methods=['GET','DELETE'])
+    def getConnector():
+        
+        return 'placeholder'
+
+
+    @app.route("/connectors/<name>/<config>", methods=['GET','PUT'])
+    def connectorConfig():
+     
+        return 'placeholder'
+
+    @app.route("/connectors/<name>/tasks", methods=['GET'])
+    def connectorTasks():
+     
+        return 'placeholder'
+
     return app
 
 
