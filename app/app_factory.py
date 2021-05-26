@@ -6,6 +6,7 @@ from whitenoise import WhiteNoise
 from werkzeug.contrib.fixers import ProxyFix
 import requests
 import json
+from time import sleep
 
 from app.extensions import db
 
@@ -75,8 +76,35 @@ def create_app(config_filename):
 
     @app.route("/connectors/<name>/tasks", methods=['GET'])
     def connectorTasks(name=None):
-        response = requests.get(endpoint +'/connectors/'+name+'/tasks')
-        return jsonify(response.content)
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name+'/tasks')
+            return jsonify(response.content)
+
+    @app.route("/connectors/<name>/status", methods=['GET'])
+    def connectorStatus(name=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name+'/status')
+
+            return jsonify(response.content)
+
+    @app.route("/connectors/status", methods=['GET'])
+    def connectorsStatus(name=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/')
+            
+            connectors = eval(response.content)
+            cnStatus = {}
+            if not connectors:
+                return "no connectors"
+            else: 
+                for connector in connectors:
+                    r = requests.get(endpoint +'/connectors/'+connector+"/status")
+                    #maybe add wait time here depending where endpoint is
+                    resp_dict = json.loads(r.content)
+                    
+                    cnStatus[connector]=resp_dict['connector']['state']
+
+            return jsonify(cnStatus)
 
     return app
 
