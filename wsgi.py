@@ -11,3 +11,4 @@ from app.app_factory import create_app
 from app.settings import EnvConfiguration
 
 application = create_app(EnvConfiguration)
+application.run(host="0.0.0.0", port=8089, debug=True)

@@ -11,6 +11,7 @@ class EnvConfiguration(metaclass=MetaFlaskEnv):
     ENV_LOAD_ALL = True
 
 
+
 class FileConfiguration:
     """
     Gets all the configuration parameters from the python module
