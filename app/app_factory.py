@@ -51,20 +51,32 @@ def create_app(config_filename):
             return jsonify(response.content) 
 
     @app.route("/connectors/<name>", methods=['GET','DELETE'])
-    def getConnector():
-        
-        return 'placeholder'
+    def getConnector(name=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name)
+            return jsonify(response.content) 
+        elif request.method == 'DELETE':
+            response = requests.delete(endpoint+'/connectors/'+name)
+            return jsonify(response.content) 
 
 
-    @app.route("/connectors/<name>/<config>", methods=['GET','PUT'])
-    def connectorConfig():
-     
-        return 'placeholder'
+
+    @app.route("/connectors/<name>/config", methods=['GET','PUT'])
+    def connectorConfig(name=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name+'/config')
+            return jsonify(response.content)
+        elif request.method == 'PUT':
+            content = request.get_json()
+            header = {"content-type": "application/json"}
+            response = requests.put(endpoint+'/connectors/'+name+'/config',data = json.dumps(content),headers= header)
+            json_response = response.json()
+            return jsonify(json_response)
 
     @app.route("/connectors/<name>/tasks", methods=['GET'])
-    def connectorTasks():
-     
-        return 'placeholder'
+    def connectorTasks(name=None):
+        response = requests.get(endpoint +'/connectors/'+name+'/tasks')
+        return jsonify(response.content)
 
     return app
 
