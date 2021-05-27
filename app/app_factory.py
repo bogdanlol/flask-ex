@@ -52,14 +52,17 @@ def create_app(config_filename):
 
         elif request.method == 'GET':
             response = requests.get(endpoint +'/connectors')
-            return jsonify(response.content) 
+            dt ={}
+            dt['connectors'] = json.loads(response.content)
+            return jsonify(dt) 
     #GET /connectors/(string:name)
     #DELETE /connectors/(string:name)
     @app.route("/connectors/<name>", methods=['GET','DELETE'])
     def getConnector(name=None):
         if request.method == 'GET':
             response = requests.get(endpoint +'/connectors/'+name)
-            return jsonify(response.content) 
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse) 
         elif request.method == 'DELETE':
             response = requests.delete(endpoint+'/connectors/'+name)
             return jsonify(response.content) 
@@ -71,7 +74,8 @@ def create_app(config_filename):
     def connectorConfig(name=None):
         if request.method == 'GET':
             response = requests.get(endpoint +'/connectors/'+name+'/config')
-            return jsonify(response.content)
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse)
         elif request.method == 'PUT':
             content = request.get_json()
             header = {"content-type": "application/json"}
@@ -86,8 +90,8 @@ def create_app(config_filename):
     def connectorStatus(name=None):
         if request.method == 'GET':
             response = requests.get(endpoint +'/connectors/'+name+'/status')
-
-            return jsonify(response.content)
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse)
 
     @app.route("/connectors/status", methods=['GET'])
     def connectorsStatus(name=None):
@@ -146,14 +150,16 @@ def create_app(config_filename):
     def connectorTasks(name=None):
         if request.method == 'GET':
             response = requests.get(endpoint +'/connectors/'+name+'/tasks')
-            return jsonify(response.content)
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse)
 
     #GET /connectors/(string:name)/tasks
     @app.route("/connectors/<name>/tasks/<id>/status", methods=['GET'])
     def connectorTasksStatus(name=None,id=None):
         if request.method == 'GET':
             response = requests.get(endpoint +'/connectors/'+name+'/tasks/'+id+'/status')
-            return jsonify(response.content)
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse)
 
     #POST /connectors/(string:name)/tasks/(int:taskid)/restart
     @app.route("/connectors/<name>/tasks/<id>/restart", methods=['POST'])
@@ -171,7 +177,8 @@ def create_app(config_filename):
     def connectorTopics(name=None):
         if request.method == 'GET':
             response = requests.get(endpoint +'/connectors/'+name+'/topics')
-            return jsonify(response.content)
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse)
 
     #PUT /connectors/(string:name)/topics/reset
     @app.route("/connectors/<name>/reset", methods=['PUT'])
@@ -190,7 +197,8 @@ def create_app(config_filename):
     def connectorPlugins():
         if request.method == 'GET':
             response = requests.get(endpoint +'/connector-plugins/')
-            return jsonify(response.content)
+            prettyResponse = json.loads(response.content)
+            return jsonify(prettyResponse)
 
     #PUT /connector-plugins/(string:name)/config/validate
     @app.route("/connector-plugins/<name>/config/validate", methods=['PUT'])
