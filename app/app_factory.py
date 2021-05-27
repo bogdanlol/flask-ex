@@ -36,6 +36,9 @@ def create_app(config_filename):
     print("Creating a Flask app with DEBUG: {}".format(app.debug))
 
 
+    #CONNECTORS
+    #GET /connectors
+    #POST /connectors
 
     @app.route("/connectors", methods=['GET', 'POST'])
     def connectors():
@@ -50,7 +53,8 @@ def create_app(config_filename):
         elif request.method == 'GET':
             response = requests.get(endpoint +'/connectors')
             return jsonify(response.content) 
-
+    #GET /connectors/(string:name)
+    #DELETE /connectors/(string:name)
     @app.route("/connectors/<name>", methods=['GET','DELETE'])
     def getConnector(name=None):
         if request.method == 'GET':
@@ -61,7 +65,8 @@ def create_app(config_filename):
             return jsonify(response.content) 
 
 
-
+    #GET /connectors/(string:name)/config
+    #PUT /connectors/(string:name)/config
     @app.route("/connectors/<name>/config", methods=['GET','PUT'])
     def connectorConfig(name=None):
         if request.method == 'GET':
@@ -74,11 +79,8 @@ def create_app(config_filename):
             json_response = response.json()
             return jsonify(json_response)
 
-    @app.route("/connectors/<name>/tasks", methods=['GET'])
-    def connectorTasks(name=None):
-        if request.method == 'GET':
-            response = requests.get(endpoint +'/connectors/'+name+'/tasks')
-            return jsonify(response.content)
+    #GET /connectors/(string:name)/status
+    #POST /connectors/(string:name)/restart
 
     @app.route("/connectors/<name>/status", methods=['GET'])
     def connectorStatus(name=None):
@@ -105,6 +107,99 @@ def create_app(config_filename):
                     cnStatus[connector]=resp_dict['connector']['state']
 
             return jsonify(cnStatus)
+
+   #PUT /connectors/(string:name)/pause
+    @app.route("/connectors/<name>/restart", methods=['POST'])
+    def connectorsRestart(name=None):
+        if request.method == 'POST':
+            response = requests.post(endpoint+'/connectors/'+name+'/restart')
+            if response.status_code == 204 or response.status_code==200:
+                return "Connector " +name+ " has been restarted"
+            else:
+                return jsonify(response.status_code)
+
+    #PUT /connectors/(string:name)/pause
+    @app.route("/connectors/<name>/pause", methods=['PUT'])
+    def connectorsPause(name=None):
+        if request.method == 'PUT':
+            response = requests.put(endpoint+'/connectors/'+name+'/pause')
+            if response.status_code == 204 or response.status_code==200 or response.status_code==202:
+                return "Connector " +name+ " has been paused"
+            else:
+                return jsonify(response.status_code)
+
+    #PUT /connectors/(string:name)/resume
+    @app.route("/connectors/<name>/resume", methods=['PUT'])
+    def connectorsResume(name=None):
+        if request.method == 'PUT':
+            response = requests.put(endpoint+'/connectors/'+name+'/resume')
+            if response.status_code == 204 or response.status_code==200 or response.status_code==202:
+                return "Connector " +name+ " has been resumed"
+            else:
+                return jsonify(response.status_code)
+
+
+
+    #TASKS
+    #GET /connectors/(string:name)/tasks
+    @app.route("/connectors/<name>/tasks", methods=['GET'])
+    def connectorTasks(name=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name+'/tasks')
+            return jsonify(response.content)
+
+    #GET /connectors/(string:name)/tasks
+    @app.route("/connectors/<name>/tasks/<id>/status", methods=['GET'])
+    def connectorTasksStatus(name=None,id=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name+'/tasks/'+id+'/status')
+            return jsonify(response.content)
+
+    #POST /connectors/(string:name)/tasks/(int:taskid)/restart
+    @app.route("/connectors/<name>/tasks/<id>/restart", methods=['POST'])
+    def connectorTaskRestart(name=None,id=None):
+        if request.method == 'POST':
+            response = requests.post(endpoint +'/connectors/'+name+'/tasks/'+id+'/status')
+            if response.status_code == 204 or response.status_code==200 or response.status_code==202:
+                return "Connector " +name+ "'s task "+id+" has been resumed"
+            else:
+                return jsonify(response.status_code)
+            
+    #TOPICS
+    #GET /connectors/(string:name)/topics
+    @app.route("/connectors/<name>/topics", methods=['GET'])
+    def connectorTopics(name=None):
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connectors/'+name+'/topics')
+            return jsonify(response.content)
+
+    #PUT /connectors/(string:name)/topics/reset
+    @app.route("/connectors/<name>/reset", methods=['PUT'])
+    def connectorsTopicsReset(name=None):
+        if request.method == 'PUT':
+            response = requests.put(endpoint+'/connectors/'+name+'/reset')
+            if response.status_code == 204 or response.status_code==200 or response.status_code==202:
+                return "Connector " +name+ " has been reset"
+            else:
+                return jsonify(response.status_code)
+
+
+    #Connector Plugins
+    #GET /connector-plugins/
+    @app.route("/connector-plugins/", methods=['GET'])
+    def connectorPlugins():
+        if request.method == 'GET':
+            response = requests.get(endpoint +'/connector-plugins/')
+            return jsonify(response.content)
+
+    #PUT /connector-plugins/(string:name)/config/validate
+    @app.route("/connector-plugins/<name>/config/validate", methods=['PUT'])
+    def connectorsPluginsConfigValidate(name=None):
+        if request.method == 'PUT':
+            response = requests.put(endpoint+'/connector-plugins/'+name+'/config/validate')
+          
+            return jsonify(response.content)
+
 
     return app
 
