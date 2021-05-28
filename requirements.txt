@@ -17,3 +17,7 @@ pytest==4.0.0
 pytest-cov==2.6.0
 werkzeug==0.14.1
 requests==2.25.1
+flask-swagger-ui==3.36.0
+apispec==4.4.2
+apispec-webframeworks==0.5.2
+marshmallow==3.12.1

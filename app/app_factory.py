@@ -7,8 +7,9 @@ from werkzeug.contrib.fixers import ProxyFix
 import requests
 import json
 from time import sleep
-
+from app.api_spec import spec
 from app.extensions import db
+from app.swagger import swagger_ui_blueprint, SWAGGER_URL
 
 #for the moment hold the endpoint here 
 #add configuration file and hold it there
@@ -42,6 +43,12 @@ def create_app(config_filename):
 
     @app.route("/connectors", methods=['GET', 'POST'])
     def connectors():
+        """
+        ---
+        get:
+            description: Get a list of active connectors
+              
+        """
         # curl --request POST 'localhost:8080/connectors' --header 'Content-Type:Application/json' --data '{"hello":"hello"}'
         if request.method == 'POST':
             content = request.get_json()
@@ -208,6 +215,22 @@ def create_app(config_filename):
           
             return jsonify(response.content)
 
+    
+    #DOCS
+    with app.test_request_context():
+    # register all swagger documented functions here
+        for fn_name in app.view_functions:
+            if fn_name == 'static':
+                continue
+            print(f"Loading swagger docs for function: {fn_name}")
+            view_fn = app.view_functions[fn_name]
+            spec.path(view=view_fn)
+
+    @app.route("/api/swagger.json")
+    def create_swagger_spec():
+        return jsonify(spec.to_dict())
+        
+    app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
     return app
 
