@@ -26,15 +26,3 @@ spec.components.schema("Input", schema=InputSchema)
 spec.components.schema("Output", schema=OutputSchema)
 
 # add swagger tags that are used for endpoint annotation
-tags = [
-            {'name': 'test functions',
-             'description': 'For testing the API.'
-            },
-            {'name': 'calculation functions',
-             'description': 'Functions for calculating.'
-            },
-       ]
-
-for tag in tags:
-    print(f"Adding tag: {tag['name']}")
-    spec.tag(tag)
