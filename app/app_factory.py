@@ -10,7 +10,9 @@ from time import sleep
 from app.api_spec import spec
 from app.extensions import db
 from app.swagger import swagger_ui_blueprint, SWAGGER_URL
-
+from werkzeug.utils import secure_filename
+from jsonschema import validate
+from app.connectorSchema import connectorSchema as connectorSchema
 #for the moment hold the endpoint here 
 #add configuration file and hold it there
 
@@ -33,10 +35,10 @@ def create_app(config_filename):
 
     # add whitenoise for static files
     app.wsgi_app = WhiteNoise(app.wsgi_app, root='app/static/')
-
+    temp_folder = app.config['UPLOAD_FOLDER']
     print("Creating a Flask app with DEBUG: {}".format(app.debug))
 
-
+   
     #CONNECTORS
     #GET /connectors
     #POST /connectors
@@ -47,15 +49,40 @@ def create_app(config_filename):
         ---
         get:
             description: Get a list of active connectors
-              
+        post:
+            description: Post new Connector
+            content: application/json
+
         """
         # curl --request POST 'localhost:8080/connectors' --header 'Content-Type:Application/json' --data '{"hello":"hello"}'
         if request.method == 'POST':
-            content = request.get_json()
-            header = {"content-type": "application/json"}
-            response = requests.post(endpoint+'/connectors',data = json.dumps(content),headers= header)
-            json_response = response.json()
-            return jsonify(json_response)
+            if not request.files:
+                content = request.get_json()
+                header = {"content-type": "application/json"}
+                response = requests.post(endpoint+'/connectors',data = json.dumps(content),headers= header)
+                json_response = response.json()
+                return jsonify(json_response)
+            else:
+                file = request.files['file']
+                if file :
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(temp_folder, filename))
+                    content=''
+                    with open(os.path.join(temp_folder, filename),'r') as f:
+                        try :    
+                            content = f.read()
+                            validate(content,connectorSchema)
+                        except Exception as e : 
+                            return(e)                       
+                    os.remove(os.path.join(temp_folder, filename))
+                    header = {"content-type": "application/json"}
+                    
+                    response = requests.post(endpoint+'/connectors',data = content,headers= header)
+                    json_response = response.json()
+                    return jsonify(json_response)
+                    
+                    #verify for proper format, if good send to f0055
+                   
 
         elif request.method == 'GET':
             response = requests.get(endpoint +'/connectors')
@@ -262,3 +289,6 @@ def setup_db(app):
     db.app = app
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app['ALLOWED_EXTENSIONS']

@@ -9,8 +9,8 @@ class EnvConfiguration(metaclass=MetaFlaskEnv):
     """
     ENV_PREFIX = 'APP_'
     ENV_LOAD_ALL = True
-
-
+    UPLOAD_FOLDER = './temp'
+    ALLOWED_EXTENSIONS = {'txt', 'json'}
 
 class FileConfiguration:
     """
