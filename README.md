@@ -22,7 +22,7 @@ The steps in this document assume that you have access to an OpenShift deploymen
 8. [Logs](#logs)
 9. [Special Environment Variables](#special-environment-variables)
 10. [One-off command execution](#one-off-command-execution)
-
+11. [Features to add](#features)
 
 ## Description
 
@@ -298,7 +298,11 @@ If you get stuck at some point, or think that this document needs
 further details or clarification, you can give feedback and look for 
 help using the channels mentioned in [the OpenShift Origin repo](https://github.com/openshift/origin), or by filing an issue.
 
-
+## Features
+   - Permit adding files to connector post (and file validation) - Done
+   - Add logger
+   - Get all connectors status - Done
+   - To add more
 ## License
 
 This code is dedicated to the public domain to the maximum extent 
