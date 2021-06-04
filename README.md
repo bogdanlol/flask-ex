@@ -303,6 +303,10 @@ help using the channels mentioned in [the OpenShift Origin repo](https://github.
    - Add logger
    - Get all connectors status - Done
    - To add more
+   - Multi Cluster investigation
+   - Worker properties file
+   - Pass Properties(azure keystore value)
+   
 ## License
 
 This code is dedicated to the public domain to the maximum extent 
