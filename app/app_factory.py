@@ -140,13 +140,13 @@ def create_app(config_filename):
     #Connector Plugins
     #GET /connector-plugins/
     @cpns.route("/", methods=['GET'])
-    class ConnectorPlugins(Resource):
+    class ConnectorPluginsApi(Resource):
         def get(self):
             return ConnectorPlugins.getConnectorPlugins()
 
     #PUT /connector-plugins/(string:name)/config/validate
     @cpns.route("/<name>/config/validate", methods=['PUT'])
-    class ConnectorPlugins(Resource):
+    class ConnectorPluginsApi(Resource):
         def put(self,name):
             return ConnectorPlugins.putConnectorsPluginsConfigValidate(name)
 
