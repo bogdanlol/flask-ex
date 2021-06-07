@@ -125,13 +125,13 @@ def create_app(config_filename):
             
     #TOPICS
     #GET /connectors/(string:name)/topics
-    @ns.route("/connectors/<name>/topics", methods=['GET'])
+    @ns.route("/<name>/topics", methods=['GET'])
     class TopicsApi(Resource):
         def get(self,name):
             return Topics.getConnectorTopics(name)
 
     #PUT /connectors/(string:name)/topics/reset
-    @ns.route("/connectors/<name>/reset", methods=['PUT'])
+    @ns.route("/<name>/reset", methods=['PUT'])
     class TopicsApi(Resource):
         def put(self,name):
             return Topics.putConnectorTopicsReset(name)
@@ -139,13 +139,13 @@ def create_app(config_filename):
 
     #Connector Plugins
     #GET /connector-plugins/
-    @cpns.route("/connector-plugins/", methods=['GET'])
+    @cpns.route("/", methods=['GET'])
     class ConnectorPlugins(Resource):
         def get(self):
             return ConnectorPlugins.getConnectorPlugins()
 
     #PUT /connector-plugins/(string:name)/config/validate
-    @cpns.route("/connector-plugins/<name>/config/validate", methods=['PUT'])
+    @cpns.route("/<name>/config/validate", methods=['PUT'])
     class ConnectorPlugins(Resource):
         def put(self,name):
             return ConnectorPlugins.putConnectorsPluginsConfigValidate(name)
