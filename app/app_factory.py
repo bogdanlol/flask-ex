@@ -7,9 +7,9 @@ from werkzeug.contrib.fixers import ProxyFix
 import requests
 import json
 from time import sleep
-from app.api_spec import spec
 from app.extensions import db
-from app.swagger import swagger_ui_blueprint, SWAGGER_URL
+from flask_restplus import Api,Resource
+from utils import *
 
 from app.models import Connectors, Tasks, Topics, ConnectorPlugins
 #for the moment hold the endpoint here 
@@ -25,6 +25,9 @@ def create_app(config_filename):
     :return: The created application
     """
     app = Flask(__name__)
+    api = Api(app=app)
+    ns = api.namespace('connectors', 'Connector methods -> api wrapper based on f0055')
+    cpns = api.namespace('connector-plugins','Connector Plugins methods -> api wrapper on f0055')
     app.config.from_object(config_filename)
     app.debug= True
     setup_db(app)
@@ -42,135 +45,112 @@ def create_app(config_filename):
     #GET /connectors
     #POST /connectors
 
-    @app.route("/connectors", methods=['GET', 'POST'])
-    def connectors():
-        """
-        ---
-        get:
-            description: Get a list of active connectors
-        post:
-            description: Post new Connector via json or via files
-            content: application/json
-
-        """
-        # curl --request POST 'localhost:8080/connectors' --header 'Content-Type:Application/json' --data '{"hello":"hello"}'
-        if request.method == 'POST':
-            return Connectors.postConnector(temp_folder)
-
-        elif request.method == 'GET':
-     
+    @ns.route("/", methods=['GET', 'POST'])
+    class ConnectorsApi(Resource):
+        def get(self):
             return Connectors.getConnectors()
+        
+        def post(self):
+            return Connectors.postConnector(temp_folder)
+    
+
     #GET /connectors/(string:name)
     #DELETE /connectors/(string:name)
-    @app.route("/connectors/<name>", methods=['GET','DELETE'])
-    def getConnector(name=None):
-        if request.method == 'GET':
+    @ns.route("/<name>", methods=['GET','DELETE'])
+    class ConnectorsApi(Resource):
+        def get(self,name):
             return Connectors.getConnector(name)
-        elif request.method == 'DELETE':
+        def delete(self,name):
             return Connectors.deleteConnector(name)
     
 
     #GET /connectors/(string:name)/config
     #PUT /connectors/(string:name)/config
-    @app.route("/connectors/<name>/config", methods=['GET','PUT'])
-    def connectorConfig(name=None):
-        if request.method == 'GET':
+    @ns.route("/<name>/config", methods=['GET','PUT'])
+    class ConnectorsApi(Resource):
+        def get(self,name):
             return Connectors.getConnectorConfig(name)
-        elif request.method == 'PUT':
+        def put(self,name):
             return Connectors.putConnectorConfig(name)
 
     #GET /connectors/(string:name)/status
     #POST /connectors/(string:name)/restart
 
-    @app.route("/connectors/<name>/status", methods=['GET'])
-    def connectorStatus(name=None):
-        return Connectors.getConnnectorStatus(name)
+    @ns.route("/<name>/status", methods=['GET'])
+    class ConnectorsApi(Resource):
+        def get(self,name):
+            return Connectors.getConnnectorStatus(name)
 
-    @app.route("/connectors/status", methods=['GET'])
-    def connectorsStatus():
-        return Connectors.getConnectorsStatus()
+    @ns.route("/status", methods=['GET'])
+    class ConnectorsApi(Resource):
+        def get(self):
+            return Connectors.getConnectorsStatus()
 
    #PUT /connectors/(string:name)/pause
-    @app.route("/connectors/<name>/restart", methods=['POST'])
-    def connectorsRestart(name=None):
-        if request.method == 'POST':
+    @ns.route("/<name>/restart", methods=['POST'])
+    class ConnectorsApi(Resource):
+        def post(self,name):
             return Connectors.postConnectorRestart(name)
 
     #PUT /connectors/(string:name)/pause
-    @app.route("/connectors/<name>/pause", methods=['PUT'])
-    def connectorsPause(name=None):
-        if request.method == 'PUT':
+    @ns.route("/<name>/pause", methods=['PUT'])
+    class ConnectorsApi(Resource):
+        def put(self,name):
            return Connectors.putConnectorPause(name)
 
     #PUT /connectors/(string:name)/resume
-    @app.route("/connectors/<name>/resume", methods=['PUT'])
-    def connectorsResume(name=None):
-        if request.method == 'PUT':
+    @ns.route("/<name>/resume", methods=['PUT'])
+    class ConnectorsApi(Resource):
+        def put(self,name):
             return Connectors.getConnectorResume(name)
 
     #TASKS
     #GET /connectors/(string:name)/tasks
-    @app.route("/connectors/<name>/tasks", methods=['GET'])
-    def connectorTasks(name=None):
-        if request.method == 'GET':
+    @ns.route("/<name>/tasks", methods=['GET'])
+    class TasksApi(Resource):
+        def get(self,name):
             return Tasks.getConnectorTasks(name)
 
     #GET /connectors/(string:name)/tasks
-    @app.route("/connectors/<name>/tasks/<id>/status", methods=['GET'])
-    def connectorTasksStatus(name=None,id=None):
-        if request.method == 'GET':
+    @ns.route("/<name>/tasks/<id>/status", methods=['GET'])
+    class TasksApi(Resource):
+        def get(self,name,id):
            return Tasks.getConnectorTasksStatus(name,id)
 
     #POST /connectors/(string:name)/tasks/(int:taskid)/restart
-    @app.route("/connectors/<name>/tasks/<id>/restart", methods=['POST'])
-    def connectorTaskRestart(name=None,id=None):
-        if request.method == 'POST':
+    @ns.route("/<name>/tasks/<id>/restart", methods=['POST'])
+    class TasksApi(Resource):
+        def post(self,name,id):
             return Tasks.postConnectorTaskRestart(name,id)
             
     #TOPICS
     #GET /connectors/(string:name)/topics
-    @app.route("/connectors/<name>/topics", methods=['GET'])
-    def connectorTopics(name=None):
-        if request.method == 'GET':
+    @ns.route("/connectors/<name>/topics", methods=['GET'])
+    class TopicsApi(Resource):
+        def get(self,name):
             return Topics.getConnectorTopics(name)
 
     #PUT /connectors/(string:name)/topics/reset
-    @app.route("/connectors/<name>/reset", methods=['PUT'])
-    def connectorsTopicsReset(name=None):
-        if request.method == 'PUT':
+    @ns.route("/connectors/<name>/reset", methods=['PUT'])
+    class TopicsApi(Resource):
+        def put(self,name):
             return Topics.putConnectorTopicsReset(name)
 
 
     #Connector Plugins
     #GET /connector-plugins/
-    @app.route("/connector-plugins/", methods=['GET'])
-    def connectorPlugins():
-        if request.method == 'GET':
+    @cpns.route("/connector-plugins/", methods=['GET'])
+    class ConnectorPlugins(Resource):
+        def get(self):
             return ConnectorPlugins.getConnectorPlugins()
 
     #PUT /connector-plugins/(string:name)/config/validate
-    @app.route("/connector-plugins/<name>/config/validate", methods=['PUT'])
-    def connectorsPluginsConfigValidate(name=None):
-        if request.method == 'PUT':
+    @cpns.route("/connector-plugins/<name>/config/validate", methods=['PUT'])
+    class ConnectorPlugins(Resource):
+        def put(self,name):
             return ConnectorPlugins.putConnectorsPluginsConfigValidate(name)
 
     
-    #DOCS
-    with app.test_request_context():
-    # register all swagger documented functions here
-        for fn_name in app.view_functions:
-            if fn_name == 'static':
-                continue
-            print(f"Loading swagger docs for function: {fn_name}")
-            view_fn = app.view_functions[fn_name]
-            spec.path(view=view_fn)
-
-    @app.route("/api/swagger.json")
-    def create_swagger_spec():
-        return jsonify(spec.to_dict())
-        
-    app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
-
     return app
 
 
