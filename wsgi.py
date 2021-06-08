@@ -7,7 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/
 """
 
-from app.app_factory import create_app
+from app.controllers import create_app
 from app.settings import EnvConfiguration
 
 application = create_app(EnvConfiguration)
