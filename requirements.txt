@@ -21,4 +21,7 @@ flask-swagger-ui==3.36.0
 apispec==4.4.2
 apispec-webframeworks==0.5.2
 marshmallow==3.12.1
+#additional custom modules 
 jsonschema==2.6.0
+python-ldap==3.3.1
+flask-restplus==0.13.0 
