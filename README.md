@@ -300,7 +300,8 @@ help using the channels mentioned in [the OpenShift Origin repo](https://github.
 
 ## TODO
    - Permit adding files to connector post (and file validation) - Done
-   - Add logger
+   - Add logger- Done
+   - Add logging 
    - Get all connectors status - Done
    - Add Restplus - Done
    - Add Config file to match template one
