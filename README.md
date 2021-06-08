@@ -302,13 +302,13 @@ help using the channels mentioned in [the OpenShift Origin repo](https://github.
    - Permit adding files to connector post (and file validation) - Done
    - Add logger
    - Get all connectors status - Done
-   - Add Restplus 
+   - Add Restplus - Done
    - Add Config file to match template one
    - Update Dockerfile & DockerCompose
    - Create unit testing if neeeded
    - Add certificates if needed 
    - Multi Cluster investigation
-   - Worker properties file
+   - Worker properties file 
    - Pass Properties(azure keystore value)
    
 ## License

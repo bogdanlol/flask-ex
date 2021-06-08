@@ -11,7 +11,7 @@ class EnvConfiguration(metaclass=MetaFlaskEnv):
     ENV_LOAD_ALL = True
     UPLOAD_FOLDER = './temp'
     ALLOWED_EXTENSIONS = {'txt', 'json'}
-
+    LOG_DIR  = './logs'
 class FileConfiguration:
     """
     Gets all the configuration parameters from the python module

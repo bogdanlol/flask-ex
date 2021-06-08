@@ -1,10 +1,12 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,abort,current_app
 from app.connectorSchema import connectorSchema as connectorSchema
 from jsonschema import validate
 from werkzeug.utils import secure_filename
 import requests 
 import json 
+from utils import *
+
 
 
 endpoint = "http://localhost:8083"
@@ -12,10 +14,15 @@ endpoint = "http://localhost:8083"
 class Connectors():
     #get list of available connectors
     def getConnectors():
-        response = requests.get(endpoint +'/connectors')
-        dt ={}
-        dt['connectors'] = json.loads(response.content)
-        return jsonify(dt) 
+        try:
+            response= requests.get(endpoint +'/connectors')
+            dt ={}
+            dt['connectors'] = json.loads(response.content)
+            return jsonify(dt)
+        except Exception as e:
+            responseObject = create_response(400, request.base_url, request.method, "error encountered {0}".format(e))
+            current_app.logger.error(responseObject)
+            abort(make_response(jsonify(responseObject), 400))
 
 
     #PostConnector

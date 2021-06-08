@@ -1,4 +1,4 @@
-import os
+import os, logging.handlers, sys
 from types import MethodType
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
@@ -39,8 +39,27 @@ def create_app(config_filename):
     app.wsgi_app = WhiteNoise(app.wsgi_app, root='app/static/')
     temp_folder = app.config['UPLOAD_FOLDER']
     print("Creating a Flask app with DEBUG: {}".format(app.debug))
+      #configure logging for app
+    '''
+    Logging configuration for application. It can be extended based on application needs.
+    It makes use of the generic python logging framework.
+    '''
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
 
-   
+    formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] [%(threadName)s] : %(message)s') 
+    log_file = '{}/{}_{}'.format(app.config['LOG_DIR'],"f55_api_wrapper",datetime.now().strftime('%Y_%m_%d-%H'))
+
+    file_handler_info = logging.handlers.RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
+    file_handler_info.setFormatter(formatter)
+
+    logger.addHandler(file_handler_info) 
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+
+    logger.addHandler(console_handler)
+    app.logger = logger
     #CONNECTORS
     #GET /connectors
     #POST /connectors
