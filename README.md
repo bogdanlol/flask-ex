@@ -22,7 +22,7 @@ The steps in this document assume that you have access to an OpenShift deploymen
 8. [Logs](#logs)
 9. [Special Environment Variables](#special-environment-variables)
 10. [One-off command execution](#one-off-command-execution)
-11. [Features to add](#features)
+11. [Future](#TODO)
 
 ## Description
 
@@ -298,11 +298,15 @@ If you get stuck at some point, or think that this document needs
 further details or clarification, you can give feedback and look for 
 help using the channels mentioned in [the OpenShift Origin repo](https://github.com/openshift/origin), or by filing an issue.
 
-## Features
+## TODO
    - Permit adding files to connector post (and file validation) - Done
    - Add logger
    - Get all connectors status - Done
-   - To add more
+   - Add Restplus 
+   - Add Config file to match template one
+   - Update Dockerfile & DockerCompose
+   - Create unit testing if neeeded
+   - Add certificates if needed 
    - Multi Cluster investigation
    - Worker properties file
    - Pass Properties(azure keystore value)
